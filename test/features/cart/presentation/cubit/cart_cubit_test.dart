@@ -66,6 +66,9 @@ void main() {
         const failure = CacheFailure('Cache Error');
         when(mockGetCartItemsUseCase.call())
             .thenAnswer((_) async => const Left(failure));
+        // Add stub for total use case to prevent MissingStubError
+        when(mockGetCartTotalUseCase.call())
+            .thenAnswer((_) async => const Right(0.0));
         return cartCubit;
       },
       act: (cubit) => cubit.loadCartItems(),
@@ -93,6 +96,7 @@ void main() {
       },
       act: (cubit) => cubit.addToCart(testProduct, quantity: testQuantity),
       expect: () => [
+        CartLoading(),
         const CartLoaded(
           items: testCartItems,
           total: 242.2,
