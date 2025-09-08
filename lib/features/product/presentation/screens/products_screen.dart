@@ -138,6 +138,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 return Container(
                   height: 50.h,
                   padding: EdgeInsets.symmetric(vertical: 8.h),
+                  margin: EdgeInsets.only(top: 8.h),
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -253,7 +254,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
       ),
     );
   }
-
 
   String _capitalize(String text) {
     if (text.isEmpty) return text;
