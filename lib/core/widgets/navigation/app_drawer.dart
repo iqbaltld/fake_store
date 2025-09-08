@@ -24,10 +24,7 @@ class AppDrawer extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        AppColors.primary,
-                        AppColors.primaryDark,
-                      ],
+                      colors: [AppColors.primary, AppColors.primaryDark],
                     ),
                   ),
                   accountName: AppText.subHeading(
@@ -41,9 +38,9 @@ class AppDrawer extends StatelessWidget {
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: AppColors.white.withValues(alpha: 0.2),
                     child: Text(
-                      user.firstName.isNotEmpty 
-                        ? user.firstName[0].toUpperCase()
-                        : 'U',
+                      user.firstName.isNotEmpty
+                          ? user.firstName[0].toUpperCase()
+                          : 'U',
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
@@ -53,32 +50,22 @@ class AppDrawer extends StatelessWidget {
                   ),
                 );
               }
-              
+
               return DrawerHeader(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      AppColors.primary,
-                      AppColors.primaryDark,
-                    ],
+                    colors: [AppColors.primary, AppColors.primaryDark],
                   ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Icon(
-                      Icons.store,
-                      size: 48.sp,
-                      color: AppColors.white,
-                    ),
+                    Icon(Icons.store, size: 48.sp, color: AppColors.white),
                     SizedBox(height: 8.h),
-                    AppText.heading2(
-                      'Fake Store',
-                      color: AppColors.white,
-                    ),
+                    AppText.heading2('Fake Store', color: AppColors.white),
                   ],
                 ),
               );
@@ -97,7 +84,7 @@ class AppDrawer extends StatelessWidget {
                     Navigator.pop(context);
                   },
                 ),
-                
+
                 _DrawerItem(
                   icon: Icons.favorite_outline,
                   title: 'Wishlist',
@@ -111,7 +98,7 @@ class AppDrawer extends StatelessWidget {
                     );
                   },
                 ),
-                
+
                 _DrawerItem(
                   icon: Icons.receipt_long_outlined,
                   title: 'Orders',
@@ -125,7 +112,7 @@ class AppDrawer extends StatelessWidget {
                     );
                   },
                 ),
-                
+
                 _DrawerItem(
                   icon: Icons.person_outline,
                   title: 'Profile',
@@ -139,7 +126,7 @@ class AppDrawer extends StatelessWidget {
                     );
                   },
                 ),
-                
+
                 _DrawerItem(
                   icon: Icons.settings_outlined,
                   title: 'Settings',
@@ -153,7 +140,7 @@ class AppDrawer extends StatelessWidget {
                     );
                   },
                 ),
-                
+
                 _DrawerItem(
                   icon: Icons.help_outline,
                   title: 'Help & Support',
@@ -167,9 +154,9 @@ class AppDrawer extends StatelessWidget {
                     );
                   },
                 ),
-                
+
                 const Divider(),
-                
+
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, authState) {
                     if (authState is AuthAuthenticated) {
@@ -178,7 +165,11 @@ class AppDrawer extends StatelessWidget {
                         title: 'Logout',
                         onTap: () {
                           Navigator.pop(context);
-                          _showLogoutDialog(context);
+                          context.read<AuthCubit>().logout();
+                          Navigator.pushReplacementNamed(
+                            context,
+                            LoginScreen.routeName,
+                          );
                         },
                         isDestructive: true,
                       );
@@ -191,39 +182,6 @@ class AppDrawer extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const AppText.heading3('Logout'),
-          content: const AppText.body('Are you sure you want to logout?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const AppText.body('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                context.read<AuthCubit>().logout();
-                Navigator.pushReplacementNamed(
-                  context,
-                  LoginScreen.routeName,
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.error,
-                foregroundColor: AppColors.white,
-              ),
-              child: const AppText.body('Logout', color: AppColors.white),
-            ),
-          ],
-        );
-      },
     );
   }
 }
@@ -245,25 +203,23 @@ class _DrawerItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
       child: ListTile(
         leading: Icon(
           icon,
-          color: isDestructive 
-            ? AppColors.error 
-            : (isDark ? AppColors.darkOnSurface : AppColors.darkGrey),
+          color: isDestructive
+              ? AppColors.error
+              : (isDark ? AppColors.darkOnSurface : AppColors.darkGrey),
           size: 24.sp,
         ),
         title: AppText.body(
           title,
-          color: isDestructive 
-            ? AppColors.error 
-            : (isDark ? AppColors.darkOnSurface : AppColors.darkGrey),
+          color: isDestructive
+              ? AppColors.error
+              : (isDark ? AppColors.darkOnSurface : AppColors.darkGrey),
         ),
         onTap: onTap,
         shape: RoundedRectangleBorder(
