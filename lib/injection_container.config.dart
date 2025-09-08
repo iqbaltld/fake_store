@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import 'core/base/base_repository.dart' as _i162;
 import 'core/network/api_manager.dart' as _i90;
 import 'core/network/network_info.dart' as _i75;
+import 'core/theme/cubit/theme_cubit.dart' as _i577;
 import 'features/authentication/data/datasources/auth_data_source.dart'
     as _i313;
 import 'features/authentication/data/repositories/auth_repository_impl.dart'
@@ -66,6 +67,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i162.BaseRepository>(
       () => _i162.BaseRepositoryImpl(networkInfo: gh<_i75.NetworkInfo>()),
+    );
+    gh.lazySingleton<_i577.ThemeCubit>(
+      () => _i577.ThemeCubit(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i313.AuthDataSource>(
       () => _i313.AuthDataSourceImpl(

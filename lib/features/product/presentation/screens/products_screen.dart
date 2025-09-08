@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fake_store/core/theme/colors.dart';
+import 'package:fake_store/core/theme/cubit/theme_cubit.dart';
+import 'package:fake_store/core/widgets/navigation/app_drawer.dart';
 import 'package:fake_store/core/widgets/others/app_text.dart';
-import 'package:fake_store/features/authentication/presentation/cubit/auth_cubit.dart';
-import 'package:fake_store/features/authentication/presentation/screens/login_screen.dart';
 import 'package:fake_store/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:fake_store/features/cart/presentation/screens/cart_screen.dart';
 import '../cubit/products_cubit.dart';
@@ -35,6 +35,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AppDrawer(),
       appBar: AppBar(
         title: const AppText(
           'Fake Store',
@@ -47,6 +48,27 @@ class _ProductsScreenState extends State<ProductsScreen> {
         backgroundColor: AppColors.primary,
         elevation: 0,
         actions: [
+          // Theme Switcher
+          BlocBuilder<ThemeCubit, ThemeState>(
+            builder: (context, themeState) {
+              final isDark = themeState.themeMode == ThemeMode.dark;
+              return IconButton(
+                onPressed: () => context.read<ThemeCubit>().toggleTheme(),
+                icon: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    isDark ? Icons.light_mode : Icons.dark_mode,
+                    key: ValueKey(isDark),
+                    color: isDark ? Colors.yellow : AppColors.white,
+                  ),
+                ),
+                tooltip: isDark
+                    ? 'Switch to Light Mode'
+                    : 'Switch to Dark Mode',
+              );
+            },
+          ),
+
           // Cart Icon with Badge
           BlocBuilder<CartCubit, CartState>(
             builder: (context, cartState) {
@@ -57,12 +79,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(
-                      Icons.shopping_cart,
+                      Icons.shopping_cart_outlined,
                       color: AppColors.white,
                     ),
                     onPressed: () {
                       Navigator.pushNamed(context, CartScreen.routeName);
                     },
+                    tooltip: 'Shopping Cart',
                   ),
                   if (itemCount > 0)
                     Positioned(
@@ -80,9 +103,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         ),
                         child: Text(
                           itemCount.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.white,
-                            fontSize: 10,
+                            fontSize: 10.sp,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
@@ -93,40 +116,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
               );
             },
           ),
-          // Logout Button
-          BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, authState) {
-              if (authState is AuthAuthenticated) {
-                return PopupMenuButton(
-                  icon: const Icon(Icons.person, color: AppColors.white),
-                  itemBuilder: (context) => [
-                    if (authState.user != null)
-                      PopupMenuItem(
-                        enabled: false,
-                        child: AppText.body(
-                          'Hello, ${authState.user!.firstName}',
-                          color: AppColors.darkGrey,
-                        ),
-                      ),
-                    const PopupMenuItem(
-                      value: 'logout',
-                      child: AppText.body('Logout'),
-                    ),
-                  ],
-                  onSelected: (value) {
-                    if (value == 'logout') {
-                      context.read<AuthCubit>().logout();
-                      Navigator.pushReplacementNamed(
-                        context,
-                        LoginScreen.routeName,
-                      );
-                    }
-                  },
-                );
-              }
-              return Container();
-            },
-          ),
+
+          SizedBox(width: 8.w),
         ],
       ),
       body: Column(

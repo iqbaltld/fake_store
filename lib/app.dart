@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fake_store/core/constants/app_constants.dart';
 import 'package:fake_store/core/routes/app_router.dart';
 import 'package:fake_store/core/services/navigation_service/navigation_service.dart';
+import 'package:fake_store/core/theme/cubit/theme_cubit.dart';
 import 'package:fake_store/core/theme/theme.dart';
 import 'package:fake_store/features/authentication/presentation/cubit/auth_cubit.dart';
 import 'package:fake_store/features/cart/presentation/cubit/cart_cubit.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MultiBlocProvider(
           providers: [
+            BlocProvider(create: (_) => getIt<ThemeCubit>()),
             BlocProvider(create: (_) => getIt<AuthCubit>()),
             BlocProvider(create: (_) => getIt<ProductsCubit>()),
             BlocProvider(create: (_) => getIt<ProductDetailsCubit>()),
@@ -31,13 +33,19 @@ class MyApp extends StatelessWidget {
           child: Builder(
             builder: (context) {
               final navigationService = getIt<NavigationService>();
-              return MaterialApp(
-                title: AppConstants.appName,
-                navigatorKey: navigationService.navigatorKey,
-                navigatorObservers: [navigationService],
-                debugShowCheckedModeBanner: false,
-                theme: AppTheme.lightTheme,
-                onGenerateRoute: _appRouter.onGenerateRoute,
+              return BlocBuilder<ThemeCubit, ThemeState>(
+                builder: (context, themeState) {
+                  return MaterialApp(
+                    title: AppConstants.appName,
+                    navigatorKey: navigationService.navigatorKey,
+                    navigatorObservers: [navigationService],
+                    debugShowCheckedModeBanner: false,
+                    theme: AppTheme.lightTheme,
+                    darkTheme: AppTheme.darkTheme,
+                    themeMode: themeState.themeMode,
+                    onGenerateRoute: _appRouter.onGenerateRoute,
+                  );
+                },
               );
             },
           ),
