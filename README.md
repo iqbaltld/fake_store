@@ -99,11 +99,6 @@ lib/
 - **Cubit Tests**: State management testing with bloc_test
 - **Integration Tests**: End-to-end user flow testing
 
-### Test Coverage
-```bash
-flutter test --coverage
-genhtml coverage/lcov.info -o coverage/html
-```
 
 ## 🚀 Getting Started
 
