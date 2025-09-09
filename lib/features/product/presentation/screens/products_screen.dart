@@ -24,8 +24,6 @@ class ProductsScreen extends StatefulWidget {
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
-  String? selectedCategory;
-
   @override
   void initState() {
     super.initState();
@@ -139,11 +137,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       if (index == 0) {
                         return CategoryChip(
                           label: S.of(context).all,
-                          isSelected: selectedCategory == null,
+                          isSelected: state.selectedCategory == null,
                           onTap: () {
-                            setState(() {
-                              selectedCategory = null;
-                            });
                             context
                                 .read<ProductsCubit>()
                                 .loadProductsByCategory(null);
@@ -153,11 +148,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       final category = state.categories[index - 1];
                       return CategoryChip(
                         label: _capitalize(category),
-                        isSelected: selectedCategory == category,
+                        isSelected: state.selectedCategory == category,
                         onTap: () {
-                          setState(() {
-                            selectedCategory = category;
-                          });
                           context.read<ProductsCubit>().loadProductsByCategory(
                             category,
                           );

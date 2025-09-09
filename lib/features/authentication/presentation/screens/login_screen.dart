@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _isPasswordVisible = false;
+  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -36,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
+    _isPasswordVisible.dispose();
     super.dispose();
   }
 
@@ -97,23 +98,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 16.h),
 
                   // Password Field
-                  AppTextField(
-                    controller: _passwordController,
-                    hintText: S.of(context).password,
-                    obscureText: !_isPasswordVisible,
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
-                    ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _isPasswordVisible,
+                    builder: (context, isPasswordVisible, child) {
+                      return AppTextField(
+                        controller: _passwordController,
+                        hintText: S.of(context).password,
+                        obscureText: !isPasswordVisible,
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            _isPasswordVisible.value = !_isPasswordVisible.value;
+                          },
+                        ),
+                      );
+                    },
                   ),
                   SizedBox(height: 32.h),
 
