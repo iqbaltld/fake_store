@@ -7,60 +7,76 @@ version: 1.0.0+1
 environment:
   sdk: ^3.8.1
 
+# Core Flutter dependencies
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-
   cupertino_icons: ^1.0.8
+
+  # UI & Design System
   cached_network_image: ^3.4.1
   flutter_screenutil: ^5.9.3
+  shimmer: ^3.0.0
+
+  # State Management & Architecture
   flutter_bloc: ^9.1.1
   equatable: ^2.0.7
   get_it: ^8.1.0
   injectable: ^2.5.1
+
+  # Networking & API Integration
   dio: ^5.8.0+1
   connectivity_plus: ^6.1.4
+
+  # Data Persistence & Storage
   shared_preferences: ^2.5.3
+
+  # Localization & Utilities
   intl: ^0.20.2
   dartz: ^0.10.1
   json_annotation: ^4.9.0
-  shimmer: ^3.0.0
 
+# Development & Testing dependencies
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # Code Quality & Linting
   flutter_lints: ^5.0.0
+
+  # Code Generation
   build_runner: ^2.6.0
   injectable_generator: ^2.8.0
   json_serializable: ^6.10.0
+  intl_utils: ^2.8.7
+
+  # Testing Framework
   bloc_test: ^10.0.0
   mockito: ^5.4.4
   mocktail: ^1.0.4
-  intl_utils: ^2.8.7
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
+# Internationalization configuration
 flutter_intl:
-  enabled: true
+  enabled: true                    # Enable intl_utils code generation for localization
 
 flutter:
   uses-material-design: true
 
+  # Asset configuration - files to be included in the app bundle
   assets:
-    - assets/images/
-    - assets/fonts/
+    - assets/images/              
+    - assets/fonts/                
 
+  # Custom font configuration
   fonts:
-    - family: Poppins
+    - family: Poppins              
       fonts:
-        - asset: assets/fonts/Poppins-Regular.ttf
-        - asset: assets/fonts/Poppins-Light.ttf
+        - asset: assets/fonts/Poppins-Regular.ttf    
+        - asset: assets/fonts/Poppins-Light.ttf      
           weight: 300
-        - asset: assets/fonts/Poppins-Medium.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf     
           weight: 500
-        - asset: assets/fonts/Poppins-Bold.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf       
           weight: 700

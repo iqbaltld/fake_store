@@ -1,54 +1,51 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import '../../../../core/base/base_repository.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/network/network_info.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_data_source.dart';
 
 @LazySingleton(as: AuthRepository)
-class AuthRepositoryImpl implements AuthRepository {
+class AuthRepositoryImpl extends BaseRepositoryImpl implements AuthRepository {
   final AuthDataSource authDataSource;
-  final NetworkInfo networkInfo;
 
-  AuthRepositoryImpl(this.authDataSource, this.networkInfo);
+  AuthRepositoryImpl({
+    required this.authDataSource,
+    required super.networkInfo,
+  });
 
   @override
   Future<Either<Failure, String>> login(String username, String password) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final token = await authDataSource.login(username, password);
-        await authDataSource.saveToken(token);
-        return Right(token);
-      } on ServerException catch (e) {
-        return Left(ServerFailure(e.message));
-      } on NetworkException catch (e) {
-        return Left(NetworkFailure(e.message));
-      } catch (e) {
-        return Left(UnknownFailure('Unknown error occurred'));
-      }
-    } else {
-      return const Left(NetworkFailure('No internet connection'));
-    }
+    final result = await handleApiCall<String>(
+      call: () => authDataSource.login(username, password),
+      onSuccess: (token) => token as String,
+      context: 'login',
+    );
+
+    return result.fold(
+      (failure) => Left(failure),
+      (token) async {
+        try {
+          await authDataSource.saveToken(token);
+          return Right(token);
+        } on CacheException catch (e) {
+          return Left(CacheFailure(e.message));
+        } catch (e) {
+          return Left(UnknownFailure('Failed to save token: ${e.toString()}'));
+        }
+      },
+    );
   }
 
   @override
   Future<Either<Failure, User>> getUserDetails(int userId) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final user = await authDataSource.getUserDetails(userId);
-        return Right(user);
-      } on ServerException catch (e) {
-        return Left(ServerFailure(e.message));
-      } on NetworkException catch (e) {
-        return Left(NetworkFailure(e.message));
-      } catch (e) {
-        return Left(UnknownFailure('Unknown error occurred'));
-      }
-    } else {
-      return const Left(NetworkFailure('No internet connection'));
-    }
+    return handleApiCall<User>(
+      call: () => authDataSource.getUserDetails(userId),
+      onSuccess: (user) => user as User,
+      context: 'get user details',
+    );
   }
 
   @override
@@ -59,7 +56,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(e.message));
     } catch (e) {
-      return Left(UnknownFailure('Unknown error occurred'));
+      return Left(UnknownFailure('Failed to clear token: ${e.toString()}'));
     }
   }
 

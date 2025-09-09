@@ -76,38 +76,26 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i210.ProductLocalDataSource>(
       () => _i210.ProductLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
     );
-    gh.lazySingleton<_i313.AuthDataSource>(
-      () => _i313.AuthDataSourceImpl(
-        gh<_i361.Dio>(),
-        gh<_i460.SharedPreferences>(),
-      ),
-    );
     gh.lazySingleton<_i725.CartLocalDataSource>(
       () => _i725.CartLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i196.ProductRemoteDataSource>(
       () => _i196.ProductRemoteDataSourceImpl(gh<_i90.ApiManager>()),
     );
-    gh.lazySingleton<_i877.AuthRepository>(
-      () => _i446.AuthRepositoryImpl(
-        gh<_i313.AuthDataSource>(),
-        gh<_i75.NetworkInfo>(),
-      ),
-    );
     gh.lazySingleton<_i303.CartRepository>(
       () => _i302.CartRepositoryImpl(gh<_i725.CartLocalDataSource>()),
     );
-    gh.lazySingleton<_i738.LogoutUseCase>(
-      () => _i738.LogoutUseCase(gh<_i877.AuthRepository>()),
+    gh.lazySingleton<_i313.AuthDataSource>(
+      () => _i313.AuthDataSourceImpl(
+        gh<_i90.ApiManager>(),
+        gh<_i460.SharedPreferences>(),
+      ),
     );
-    gh.lazySingleton<_i593.CheckAuthStatusUseCase>(
-      () => _i593.CheckAuthStatusUseCase(gh<_i877.AuthRepository>()),
-    );
-    gh.lazySingleton<_i583.LoginUseCase>(
-      () => _i583.LoginUseCase(gh<_i877.AuthRepository>()),
-    );
-    gh.lazySingleton<_i416.GetUserDetailsUseCase>(
-      () => _i416.GetUserDetailsUseCase(gh<_i877.AuthRepository>()),
+    gh.lazySingleton<_i877.AuthRepository>(
+      () => _i446.AuthRepositoryImpl(
+        authDataSource: gh<_i313.AuthDataSource>(),
+        networkInfo: gh<_i75.NetworkInfo>(),
+      ),
     );
     gh.lazySingleton<_i841.ProductRepository>(
       () => _i531.ProductRepositoryImpl(
@@ -131,14 +119,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i289.GetCartItemsUseCase>(
       () => _i289.GetCartItemsUseCase(gh<_i303.CartRepository>()),
     );
-    gh.lazySingleton<_i470.AuthCubit>(
-      () => _i470.AuthCubit(
-        gh<_i583.LoginUseCase>(),
-        gh<_i738.LogoutUseCase>(),
-        gh<_i416.GetUserDetailsUseCase>(),
-        gh<_i593.CheckAuthStatusUseCase>(),
-      ),
-    );
     gh.lazySingleton<_i246.GetCategoriesUseCase>(
       () => _i246.GetCategoriesUseCase(gh<_i841.ProductRepository>()),
     );
@@ -158,6 +138,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i35.ProductDetailsCubit>(
       () => _i35.ProductDetailsCubit(gh<_i733.GetProductByIdUseCase>()),
     );
+    gh.lazySingleton<_i738.LogoutUseCase>(
+      () => _i738.LogoutUseCase(gh<_i877.AuthRepository>()),
+    );
+    gh.lazySingleton<_i593.CheckAuthStatusUseCase>(
+      () => _i593.CheckAuthStatusUseCase(gh<_i877.AuthRepository>()),
+    );
+    gh.lazySingleton<_i583.LoginUseCase>(
+      () => _i583.LoginUseCase(gh<_i877.AuthRepository>()),
+    );
+    gh.lazySingleton<_i416.GetUserDetailsUseCase>(
+      () => _i416.GetUserDetailsUseCase(gh<_i877.AuthRepository>()),
+    );
     gh.lazySingleton<_i233.CartCubit>(
       () => _i233.CartCubit(
         gh<_i289.GetCartItemsUseCase>(),
@@ -165,6 +157,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i124.UpdateCartItemUseCase>(),
         gh<_i589.RemoveFromCartUseCase>(),
         gh<_i468.GetCartTotalUseCase>(),
+      ),
+    );
+    gh.lazySingleton<_i470.AuthCubit>(
+      () => _i470.AuthCubit(
+        gh<_i583.LoginUseCase>(),
+        gh<_i738.LogoutUseCase>(),
+        gh<_i416.GetUserDetailsUseCase>(),
+        gh<_i593.CheckAuthStatusUseCase>(),
       ),
     );
     return this;

@@ -78,8 +78,6 @@ class ProductRepositoryImpl extends BaseRepositoryImpl implements ProductReposit
       // Check if we have internet connection
       if (await networkInfo.isConnected) {
         // For product details, always try to fetch fresh data when online
-        print('🌐 Online: Fetching fresh data for product $id');
-        
         final result = await handleApiCall<Product>(
           call: () => remoteDataSource.getProductById(id),
           onSuccess: (data) => data as Product,
@@ -88,24 +86,20 @@ class ProductRepositoryImpl extends BaseRepositoryImpl implements ProductReposit
         
         return result.fold(
           (failure) async {
-            print('❌ API failed for product $id: ${failure.message}');
             // If remote call fails, try to get cached data as fallback
             final cachedProduct = await localDataSource.getCachedProductById(id);
             if (cachedProduct != null) {
-              print('📦 Using cached fallback for product $id');
               return Right(cachedProduct as Product);
             }
             return Left(failure);
           },
           (product) async {
-            print('✅ Got fresh data for product $id, caching it');
             // Cache the fresh data for offline use
             await localDataSource.cacheProduct(product as ProductModel);
             return Right(product);
           },
         );
       } else {
-        print('📴 Offline: Using cached data for product $id');
         // No internet, try to get cached data
         final cachedProduct = await localDataSource.getCachedProductById(id);
         if (cachedProduct != null) {
@@ -114,7 +108,6 @@ class ProductRepositoryImpl extends BaseRepositoryImpl implements ProductReposit
         return const Left(NetworkFailure('No internet connection and no cached data'));
       }
     } catch (e) {
-      print('💥 Exception in getProductById: ${e.toString()}');
       return Left(CacheFailure( 'Failed to get product: ${e.toString()}'));
     }
   }

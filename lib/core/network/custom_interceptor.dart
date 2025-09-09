@@ -153,7 +153,6 @@ class CustomInterceptor extends Interceptor {
   void _handleUnauthenticated() async {
     // Clear tokens
     await _prefs.remove(StorageKeys.token);
-    await _prefs.remove(StorageKeys.refreshToken);
     
     // Get current route and login route
     final currentRoute = _navigationService.currentRoute;
