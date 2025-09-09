@@ -144,3 +144,19 @@ Add new translations in:
 - `lib/l10n/intl_ar.arb` (Arabic)
 
 Then run: `flutter packages pub run intl_utils:generate`
+
+
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/1.png" alt="" title="" width="140"/>
+  <img src="screenshots/2.png" alt="" title="" width="140"/>
+  <img src="screenshots/3.png" alt="" title="" width="140"/>
+  <img src="screenshots/4.png" alt="" title="" width="140"/>
+  <img src="screenshots/5.png" alt="" title="" width="140"/>
+</p>
+
+
+## Author
+
+**Muhammed Iqbal** – [LinkedIn](https://linkedin.com/in/iqbaltld)  
