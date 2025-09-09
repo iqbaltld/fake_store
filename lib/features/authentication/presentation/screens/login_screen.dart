@@ -9,39 +9,19 @@ import 'package:fake_store/features/product/presentation/screens/products_screen
 import 'package:fake_store/generated/l10n.dart';
 import '../cubit/auth_cubit.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   static const String routeName = '/login';
 
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
-
-  @override
-  void initState() {
-    super.initState();
-    // Pre-fill with demo credentials for FakeStore API
-    _usernameController.text = 'johnd';
-    _passwordController.text = 'm38rmF\$';
-  }
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    _isPasswordVisible.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Create controllers and form key locally
+    final usernameController = TextEditingController(text: 'johnd');
+    final passwordController = TextEditingController(text: 'm38rmF\$');
+    final formKey = GlobalKey<FormState>();
+    final isPasswordVisible = ValueNotifier<bool>(false);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -64,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
               }
             },
             child: Form(
-              key: _formKey,
+              key: formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -90,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Username Field
                   AppTextField(
-                    controller: _usernameController,
+                    controller: usernameController,
                     hintText: S.of(context).username,
                     keyboardType: TextInputType.text,
                     prefixIcon: const Icon(Icons.person_outline),
@@ -99,21 +79,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Password Field
                   ValueListenableBuilder<bool>(
-                    valueListenable: _isPasswordVisible,
-                    builder: (context, isPasswordVisible, child) {
+                    valueListenable: isPasswordVisible,
+                    builder: (context, isPasswordVisibleValue, child) {
                       return AppTextField(
-                        controller: _passwordController,
+                        controller: passwordController,
                         hintText: S.of(context).password,
-                        obscureText: !isPasswordVisible,
+                        obscureText: !isPasswordVisibleValue,
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            isPasswordVisible
+                            isPasswordVisibleValue
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
                           onPressed: () {
-                            _isPasswordVisible.value = !_isPasswordVisible.value;
+                            isPasswordVisible.value = !isPasswordVisible.value;
                           },
                         ),
                       );
@@ -128,10 +108,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         text: S.of(context).signIn,
                         isLoading: state is AuthLoading,
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) {
+                          if (formKey.currentState!.validate()) {
                             context.read<AuthCubit>().login(
-                              _usernameController.text.trim(),
-                              _passwordController.text.trim(),
+                              usernameController.text.trim(),
+                              passwordController.text.trim(),
                             );
                           }
                         },

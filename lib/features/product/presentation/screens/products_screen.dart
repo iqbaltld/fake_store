@@ -14,22 +14,10 @@ import '../widgets/product_card.dart';
 import '../widgets/products_shimmer_grid.dart';
 import 'product_details_screen.dart';
 
-class ProductsScreen extends StatefulWidget {
+class ProductsScreen extends StatelessWidget {
   static const String routeName = '/products';
 
   const ProductsScreen({super.key});
-
-  @override
-  State<ProductsScreen> createState() => _ProductsScreenState();
-}
-
-class _ProductsScreenState extends State<ProductsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<ProductsCubit>().loadProducts();
-    context.read<CartCubit>().loadCartItems();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +154,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
           Expanded(
             child: BlocBuilder<ProductsCubit, ProductsState>(
               builder: (context, state) {
-                if (state is ProductsLoading) {
+                // Initialize data if in initial state
+                if (state is ProductsInitial) {
+                  context.read<ProductsCubit>().loadProducts();
+                  context.read<CartCubit>().loadCartItems();
+                  return const ProductsShimmerGrid();
+                } else if (state is ProductsLoading) {
                   return const ProductsShimmerGrid();
                 } else if (state is ProductsLoaded) {
                   if (state.products.isEmpty) {

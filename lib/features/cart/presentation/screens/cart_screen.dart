@@ -9,21 +9,10 @@ import '../widgets/cart_item.dart';
 import '../widgets/cart_summary.dart';
 import '../widgets/empty_cart.dart';
 
-class CartScreen extends StatefulWidget {
+class CartScreen extends StatelessWidget {
   static const String routeName = '/cart';
 
   const CartScreen({super.key});
-
-  @override
-  State<CartScreen> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends State<CartScreen> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<CartCubit>().loadCartItems();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +32,11 @@ class _CartScreenState extends State<CartScreen> {
       ),
       body: BlocBuilder<CartCubit, CartState>(
         builder: (context, state) {
-          if (state is CartLoading) {
+          // Initialize cart if in initial state
+          if (state is CartInitial) {
+            context.read<CartCubit>().loadCartItems();
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is CartLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CartLoaded) {
             if (state.items.isEmpty) {

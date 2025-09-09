@@ -11,7 +11,7 @@ import 'package:fake_store/generated/l10n.dart';
 import '../cubit/product_details_cubit.dart';
 import '../widgets/product_details_shimmer.dart';
 
-class ProductDetailsScreen extends StatefulWidget {
+class ProductDetailsScreen extends StatelessWidget {
   static const String routeName = '/product-details';
   
   final int productId;
@@ -20,17 +20,6 @@ class ProductDetailsScreen extends StatefulWidget {
     super.key,
     required this.productId,
   });
-
-  @override
-  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
-}
-
-class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<ProductDetailsCubit>().loadProductDetails(widget.productId);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +35,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       ),
       body: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
         builder: (context, state) {
-          if (state is ProductDetailsLoading) {
+          // Initialize product details if in initial state
+          if (state is ProductDetailsInitial) {
+            context.read<ProductDetailsCubit>().loadProductDetails(productId);
+            return const ProductDetailsShimmer();
+          } else if (state is ProductDetailsLoading) {
             return const ProductDetailsShimmer();
           } else if (state is ProductDetailsLoaded) {
             final product = state.product;
@@ -192,7 +185,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   SizedBox(height: 16.h),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<ProductDetailsCubit>().loadProductDetails(widget.productId);
+                      context.read<ProductDetailsCubit>().loadProductDetails(productId);
                     },
                     child: AppText.body(S.of(context).retry, color: AppColors.white),
                   ),
