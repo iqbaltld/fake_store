@@ -79,7 +79,7 @@ lib/
 ## API Integration
 
 ### FakeStore API Endpoints
-- `GET /products` - Product catalog with pagination
+- `GET /products` - Product catalog
 - `GET /products/{id}` - Individual product details
 - `GET /products/categories` - Available categories
 - `GET /products/category/{category}` - Products by category
