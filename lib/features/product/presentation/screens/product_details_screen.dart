@@ -7,6 +7,7 @@ import 'package:fake_store/core/theme/colors.dart';
 import 'package:fake_store/core/widgets/others/app_text.dart';
 import 'package:fake_store/core/widgets/others/custom_button.dart';
 import 'package:fake_store/features/cart/presentation/cubit/cart_cubit.dart';
+import 'package:fake_store/generated/l10n.dart';
 import '../cubit/product_details_cubit.dart';
 import '../widgets/product_details_shimmer.dart';
 
@@ -35,9 +36,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const AppText(
-          'Product Details',
-          style: TextStyle(color: AppColors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        title: AppText(
+          S.of(context).productDetails,
+          style: const TextStyle(color: AppColors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.primary,
         iconTheme: const IconThemeData(color: AppColors.white),
@@ -114,7 +115,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                                 SizedBox(width: 4.w),
                                 AppText.body(
-                                  '${product.rating.rate} (${product.rating.count} reviews)',
+                                  '${product.rating.rate} (${product.rating.count} ${S.of(context).reviews})',
                                   color: AppColors.grey,
                                 ),
                               ],
@@ -129,7 +130,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         SizedBox(height: 20.h),
                         
                         // Description
-                        const AppText.heading3('Description'),
+                        AppText.heading3(S.of(context).description),
                         SizedBox(height: 8.h),
                         AppText.body(
                           product.description,
@@ -150,16 +151,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               );
                             } else if (cartState is CartLoaded) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Added to cart successfully!'),
+                                SnackBar(
+                                  content: Text(S.of(context).addedToCartSuccessfully),
                                   backgroundColor: AppColors.success,
-                                  duration: Duration(seconds: 1),
+                                  duration: const Duration(seconds: 1),
                                 ),
                               );
                             }
                           },
                           child: CustomButton(
-                            text: 'Add to Cart',
+                            text: S.of(context).addToCart,
                             width: double.infinity,
                             onPressed: () {
                               context.read<CartCubit>().addToCart(product);
@@ -193,7 +194,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     onPressed: () {
                       context.read<ProductDetailsCubit>().loadProductDetails(widget.productId);
                     },
-                    child: const AppText.body('Retry', color: AppColors.white),
+                    child: AppText.body(S.of(context).retry, color: AppColors.white),
                   ),
                 ],
               ),

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fake_store/core/constants/app_constants.dart';
 import 'package:fake_store/core/routes/app_router.dart';
 import 'package:fake_store/core/services/navigation_service/navigation_service.dart';
 import 'package:fake_store/core/theme/cubit/theme_cubit.dart';
 import 'package:fake_store/core/theme/theme.dart';
+import 'package:fake_store/core/language/cubit/language_cubit.dart';
 import 'package:fake_store/features/authentication/presentation/cubit/auth_cubit.dart';
 import 'package:fake_store/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:fake_store/features/product/presentation/cubit/product_details_cubit.dart';
 import 'package:fake_store/features/product/presentation/cubit/products_cubit.dart';
+import 'package:fake_store/generated/l10n.dart';
 import 'package:fake_store/injection_container.dart';
 
 class MyApp extends StatelessWidget {
@@ -25,6 +28,7 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => getIt<ThemeCubit>()),
+            BlocProvider(create: (_) => getIt<LanguageCubit>()),
             BlocProvider(create: (_) => getIt<AuthCubit>()),
             BlocProvider(create: (_) => getIt<ProductsCubit>()),
             BlocProvider(create: (_) => getIt<ProductDetailsCubit>()),
@@ -35,15 +39,27 @@ class MyApp extends StatelessWidget {
               final navigationService = getIt<NavigationService>();
               return BlocBuilder<ThemeCubit, ThemeState>(
                 builder: (context, themeState) {
-                  return MaterialApp(
-                    title: AppConstants.appName,
-                    navigatorKey: navigationService.navigatorKey,
-                    navigatorObservers: [navigationService],
-                    debugShowCheckedModeBanner: false,
-                    theme: AppTheme.lightTheme,
-                    darkTheme: AppTheme.darkTheme,
-                    themeMode: themeState.themeMode,
-                    onGenerateRoute: _appRouter.onGenerateRoute,
+                  return BlocBuilder<LanguageCubit, LanguageState>(
+                    builder: (context, languageState) {
+                      return MaterialApp(
+                        title: AppConstants.appName,
+                        navigatorKey: navigationService.navigatorKey,
+                        navigatorObservers: [navigationService],
+                        debugShowCheckedModeBanner: false,
+                        theme: AppTheme.lightTheme,
+                        darkTheme: AppTheme.darkTheme,
+                        themeMode: themeState.themeMode,
+                        locale: languageState.locale,
+                        localizationsDelegates: const [
+                          S.delegate,
+                          GlobalMaterialLocalizations.delegate,
+                          GlobalWidgetsLocalizations.delegate,
+                          GlobalCupertinoLocalizations.delegate,
+                        ],
+                        supportedLocales: S.delegate.supportedLocales,
+                        onGenerateRoute: _appRouter.onGenerateRoute,
+                      );
+                    },
                   );
                 },
               );

@@ -7,6 +7,7 @@ import 'package:fake_store/core/widgets/navigation/app_drawer.dart';
 import 'package:fake_store/core/widgets/others/app_text.dart';
 import 'package:fake_store/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:fake_store/features/cart/presentation/screens/cart_screen.dart';
+import 'package:fake_store/generated/l10n.dart';
 import '../cubit/products_cubit.dart';
 import '../widgets/category_chip.dart';
 import '../widgets/product_card.dart';
@@ -37,9 +38,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
     return Scaffold(
       drawer: const AppDrawer(),
       appBar: AppBar(
-        title: const AppText(
-          'Fake Store',
-          style: TextStyle(
+        title: AppText(
+          S.of(context).appTitle,
+          style: const TextStyle(
             color: AppColors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -63,8 +64,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   ),
                 ),
                 tooltip: isDark
-                    ? 'Switch to Light Mode'
-                    : 'Switch to Dark Mode',
+                    ? S.of(context).switchToLightMode
+                    : S.of(context).switchToDarkMode,
               );
             },
           ),
@@ -85,7 +86,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     onPressed: () {
                       Navigator.pushNamed(context, CartScreen.routeName);
                     },
-                    tooltip: 'Shopping Cart',
+                    tooltip: S.of(context).shoppingCart,
                   ),
                   if (itemCount > 0)
                     Positioned(
@@ -137,7 +138,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return CategoryChip(
-                          label: 'All',
+                          label: S.of(context).all,
                           isSelected: selectedCategory == null,
                           onTap: () {
                             setState(() {
@@ -177,8 +178,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   return const ProductsShimmerGrid();
                 } else if (state is ProductsLoaded) {
                   if (state.products.isEmpty) {
-                    return const Center(
-                      child: AppText.body('No products found'),
+                    return Center(
+                      child: AppText.body(S.of(context).noProductsFound),
                     );
                   }
                   return RefreshIndicator(
@@ -228,8 +229,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         ElevatedButton(
                           onPressed: () =>
                               context.read<ProductsCubit>().loadProducts(),
-                          child: const AppText.body(
-                            'Retry',
+                          child: AppText.body(
+                            S.of(context).retry,
                             color: AppColors.white,
                           ),
                         ),

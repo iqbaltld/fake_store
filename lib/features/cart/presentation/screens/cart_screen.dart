@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fake_store/core/theme/colors.dart';
 import 'package:fake_store/core/widgets/others/app_text.dart';
+import 'package:fake_store/generated/l10n.dart';
 import '../cubit/cart_cubit.dart';
 import '../widgets/cart_item.dart';
 import '../widgets/cart_summary.dart';
@@ -28,9 +29,9 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const AppText(
-          'Shopping Cart',
-          style: TextStyle(
+        title: AppText(
+          S.of(context).shoppingCart,
+          style: const TextStyle(
             color: AppColors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -86,8 +87,10 @@ class _CartScreenState extends State<CartScreen> {
                   itemCount: state.itemCount,
                   onCheckout: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Checkout feature coming soon!'),
+                      SnackBar(
+                        content: Text(
+                          S.of(context).featureComingSoon,
+                        ),
                         backgroundColor: AppColors.info,
                       ),
                     );
@@ -114,7 +117,10 @@ class _CartScreenState extends State<CartScreen> {
                   SizedBox(height: 16.h),
                   ElevatedButton(
                     onPressed: () => context.read<CartCubit>().loadCartItems(),
-                    child: const AppText.body('Retry', color: AppColors.white),
+                    child: AppText.body(
+                      S.of(context).retry,
+                      color: AppColors.white,
+                    ),
                   ),
                 ],
               ),

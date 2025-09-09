@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fake_store/core/theme/colors.dart';
 import 'package:fake_store/core/widgets/others/app_text.dart';
 import 'package:fake_store/core/widgets/others/custom_button.dart';
+import 'package:fake_store/generated/l10n.dart';
 
 class EmptyCart extends StatelessWidget {
   final VoidCallback onContinueShopping;
@@ -24,19 +25,19 @@ class EmptyCart extends StatelessWidget {
             color: AppColors.grey,
           ),
           SizedBox(height: 16.h),
-          const AppText.heading3(
-            'Your cart is empty',
+          AppText.heading3(
+            S.of(context).emptyCart,
             color: AppColors.grey,
           ),
           SizedBox(height: 8.h),
-          const AppText.body(
-            'Add some products to get started',
+          AppText.body(
+            S.of(context).addSomeProducts,
             color: AppColors.grey,
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 24.h),
           CustomButton(
-            text: 'Continue Shopping',
+            text: S.of(context).continueShopping,
             onPressed: onContinueShopping,
           ),
         ],

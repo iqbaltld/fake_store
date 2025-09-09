@@ -6,6 +6,7 @@ import 'package:fake_store/core/widgets/others/app_text.dart';
 import 'package:fake_store/core/widgets/others/app_text_field.dart';
 import 'package:fake_store/core/widgets/others/custom_button.dart';
 import 'package:fake_store/features/product/presentation/screens/products_screen.dart';
+import 'package:fake_store/generated/l10n.dart';
 import '../cubit/auth_cubit.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -74,13 +75,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: AppColors.primary,
                   ),
                   SizedBox(height: 16.h),
-                  const AppText.heading1(
-                    'Fake Store',
+                  AppText.heading1(
+                    S.of(context).appTitle,
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 8.h),
-                  const AppText.body(
-                    'Sign in to continue',
+                  AppText.body(
+                    S.of(context).signInToContinue,
                     textAlign: TextAlign.center,
                     color: AppColors.grey,
                   ),
@@ -89,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Username Field
                   AppTextField(
                     controller: _usernameController,
-                    hintText: 'Username',
+                    hintText: S.of(context).username,
                     keyboardType: TextInputType.text,
                     prefixIcon: const Icon(Icons.person_outline),
                   ),
@@ -98,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Password Field
                   AppTextField(
                     controller: _passwordController,
-                    hintText: 'Password',
+                    hintText: S.of(context).password,
                     obscureText: !_isPasswordVisible,
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
@@ -120,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   BlocBuilder<AuthCubit, AuthState>(
                     builder: (context, state) {
                       return CustomButton(
-                        text: 'Sign In',
+                        text: S.of(context).signIn,
                         isLoading: state is AuthLoading,
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {

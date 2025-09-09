@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fake_store/core/theme/colors.dart';
 import 'package:fake_store/core/widgets/others/app_text.dart';
 import 'package:fake_store/features/cart/domain/entities/cart_item.dart';
+import 'package:fake_store/generated/l10n.dart';
 
 class CartItemWidget extends StatelessWidget {
   final CartItem item;
@@ -71,7 +72,7 @@ class CartItemWidget extends StatelessWidget {
                       ),
                       Flexible(
                         child: AppText.body(
-                          'Total: \$${item.totalPrice.toStringAsFixed(2)}',
+                          '${S.of(context).total}: \$${item.totalPrice.toStringAsFixed(2)}',
                           color: AppColors.darkGrey,
                           overflow: TextOverflow.ellipsis,
                         ),

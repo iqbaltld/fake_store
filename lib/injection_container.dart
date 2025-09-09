@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // Core imports
 import 'package:fake_store/core/constants/api_urls.dart';
+import 'package:fake_store/core/language/cubit/language_cubit.dart';
 import 'package:fake_store/core/network/custom_interceptor.dart';
 import 'package:fake_store/core/services/navigation_service/navigation_service.dart';
 
@@ -112,6 +113,8 @@ void _registerNavigationDependencies() {
 
 /// Registers additional dependencies that need manual setup
 void _registerAdditionalDependencies() {
-  // Data sources are registered by the injectable generator
-  // No need to manually register them here
+  // Register LanguageCubit
+  getIt.registerLazySingleton<LanguageCubit>(
+    () => LanguageCubit(getIt<SharedPreferences>()),
+  );
 }

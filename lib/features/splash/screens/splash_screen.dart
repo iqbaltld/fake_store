@@ -6,6 +6,7 @@ import 'package:fake_store/core/widgets/others/app_text.dart';
 import 'package:fake_store/features/authentication/presentation/cubit/auth_cubit.dart';
 import 'package:fake_store/features/authentication/presentation/screens/login_screen.dart';
 import 'package:fake_store/features/product/presentation/screens/products_screen.dart';
+import 'package:fake_store/generated/l10n.dart';
 
 class SplashScreen extends StatefulWidget {
   static const String routeName = '/splash';
@@ -48,10 +49,10 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               Icon(Icons.shopping_bag, size: 80.sp, color: AppColors.white),
               SizedBox(height: 24.h),
-              const AppText.heading1('Fake Store', color: AppColors.white),
+              AppText.heading1(S.of(context).appTitle, color: AppColors.white),
               SizedBox(height: 8.h),
-              const AppText.body(
-                'Your favorite shopping app',
+              AppText.body(
+                S.of(context).appSubtitle,
                 color: AppColors.white,
               ),
               SizedBox(height: 40.h),

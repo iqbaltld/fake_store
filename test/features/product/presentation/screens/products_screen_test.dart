@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fake_store/features/product/presentation/cubit/products_cubit.dart';
 import 'package:fake_store/features/product/presentation/screens/products_screen.dart';
 import 'package:fake_store/features/product/presentation/widgets/products_shimmer_grid.dart';
 import 'package:fake_store/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:fake_store/core/theme/cubit/theme_cubit.dart';
+import 'package:fake_store/generated/l10n.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
 import '../../../../helpers/test_constants.dart';
@@ -36,6 +38,14 @@ void main() {
       ],
       child: MaterialApp(
         home: body,
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        locale: const Locale('en'),
         builder: (context, child) {
           ScreenUtil.init(context, designSize: const Size(360, 690));
           return child!;

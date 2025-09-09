@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fake_store/core/theme/colors.dart';
 import 'package:fake_store/core/widgets/others/app_text.dart';
 import 'package:fake_store/core/widgets/others/custom_button.dart';
+import 'package:fake_store/generated/l10n.dart';
 
 class CartSummary extends StatelessWidget {
   final double total;
@@ -36,7 +37,7 @@ class CartSummary extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               AppText.subHeading(
-                'Items ($itemCount)',
+                S.of(context).itemsCount(itemCount),
                 color: AppColors.darkGrey,
               ),
               AppText.subHeading(
@@ -51,7 +52,7 @@ class CartSummary extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const AppText.heading3('Total'),
+              AppText.heading3(S.of(context).total),
               AppText.heading3(
                 '\$${total.toStringAsFixed(2)}',
                 color: AppColors.primary,
@@ -60,7 +61,7 @@ class CartSummary extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           CustomButton(
-            text: 'Checkout',
+            text: S.of(context).checkout,
             width: double.infinity,
             onPressed: onCheckout,
           ),

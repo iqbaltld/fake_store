@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fake_store/core/theme/colors.dart';
 import 'package:fake_store/core/widgets/others/app_text.dart';
+import 'package:fake_store/core/language/cubit/language_cubit.dart';
 import 'package:fake_store/features/authentication/presentation/cubit/auth_cubit.dart';
 import 'package:fake_store/features/authentication/presentation/screens/login_screen.dart';
+import 'package:fake_store/generated/l10n.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -65,7 +67,7 @@ class AppDrawer extends StatelessWidget {
                   children: [
                     Icon(Icons.store, size: 48.sp, color: AppColors.white),
                     SizedBox(height: 8.h),
-                    AppText.heading2('Fake Store', color: AppColors.white),
+                    AppText.heading2(S.of(context).appTitle, color: AppColors.white),
                   ],
                 ),
               );
@@ -79,7 +81,7 @@ class AppDrawer extends StatelessWidget {
               children: [
                 _DrawerItem(
                   icon: Icons.home_outlined,
-                  title: 'Home',
+                  title: S.of(context).home,
                   onTap: () {
                     Navigator.pop(context);
                   },
@@ -87,12 +89,12 @@ class AppDrawer extends StatelessWidget {
 
                 _DrawerItem(
                   icon: Icons.favorite_outline,
-                  title: 'Wishlist',
+                  title: S.of(context).wishlist,
                   onTap: () {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Wishlist feature coming soon!'),
+                      SnackBar(
+                        content: Text(S.of(context).featureComingSoon),
                         backgroundColor: AppColors.info,
                       ),
                     );
@@ -101,12 +103,12 @@ class AppDrawer extends StatelessWidget {
 
                 _DrawerItem(
                   icon: Icons.receipt_long_outlined,
-                  title: 'Orders',
+                  title: S.of(context).orders,
                   onTap: () {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Orders feature coming soon!'),
+                      SnackBar(
+                        content: Text(S.of(context).featureComingSoon),
                         backgroundColor: AppColors.info,
                       ),
                     );
@@ -115,26 +117,38 @@ class AppDrawer extends StatelessWidget {
 
                 _DrawerItem(
                   icon: Icons.person_outline,
-                  title: 'Profile',
+                  title: S.of(context).profile,
                   onTap: () {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Profile feature coming soon!'),
+                      SnackBar(
+                        content: Text(S.of(context).featureComingSoon),
                         backgroundColor: AppColors.info,
                       ),
                     );
                   },
                 ),
 
+                BlocBuilder<LanguageCubit, LanguageState>(
+                  builder: (context, languageState) {
+                    return _DrawerItem(
+                      icon: Icons.language_outlined,
+                      title: S.of(context).language,
+                      onTap: () {
+                        _showLanguageDialog(context);
+                      },
+                    );
+                  },
+                ),
+
                 _DrawerItem(
                   icon: Icons.settings_outlined,
-                  title: 'Settings',
+                  title: S.of(context).settings,
                   onTap: () {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Settings feature coming soon!'),
+                      SnackBar(
+                        content: Text(S.of(context).featureComingSoon),
                         backgroundColor: AppColors.info,
                       ),
                     );
@@ -143,12 +157,12 @@ class AppDrawer extends StatelessWidget {
 
                 _DrawerItem(
                   icon: Icons.help_outline,
-                  title: 'Help & Support',
+                  title: S.of(context).helpAndSupport,
                   onTap: () {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Help & Support feature coming soon!'),
+                      SnackBar(
+                        content: Text(S.of(context).featureComingSoon),
                         backgroundColor: AppColors.info,
                       ),
                     );
@@ -162,7 +176,7 @@ class AppDrawer extends StatelessWidget {
                     if (authState is AuthAuthenticated) {
                       return _DrawerItem(
                         icon: Icons.logout,
-                        title: 'Logout',
+                        title: S.of(context).logout,
                         onTap: () {
                           Navigator.pop(context);
                           context.read<AuthCubit>().logout();
@@ -182,6 +196,54 @@ class AppDrawer extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(S.of(context).selectLanguage),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              BlocBuilder<LanguageCubit, LanguageState>(
+                builder: (context, languageState) {
+                  return Column(
+                    children: [
+                      RadioListTile<String>(
+                        title: Text(S.of(context).english),
+                        value: 'en',
+                        groupValue: languageState.locale.languageCode,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            context.read<LanguageCubit>().changeLanguage(value);
+                            Navigator.of(dialogContext).pop();
+                            Navigator.of(context).pop(); // Close drawer
+                          }
+                        },
+                      ),
+                      RadioListTile<String>(
+                        title: Text(S.of(context).arabic),
+                        value: 'ar',
+                        groupValue: languageState.locale.languageCode,
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            context.read<LanguageCubit>().changeLanguage(value);
+                            Navigator.of(dialogContext).pop();
+                            Navigator.of(context).pop(); // Close drawer
+                          }
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
