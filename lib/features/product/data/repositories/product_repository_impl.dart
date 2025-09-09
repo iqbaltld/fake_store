@@ -5,49 +5,223 @@ import '../../../../core/error/failures.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/product_repository.dart';
 import '../datasources/product_data_source.dart';
+import '../datasources/product_local_data_source.dart';
+import '../models/product_model.dart';
 
 @LazySingleton(as: ProductRepository)
 class ProductRepositoryImpl extends BaseRepositoryImpl implements ProductRepository {
-  final ProductDataSource productDataSource;
+  final ProductRemoteDataSource remoteDataSource;
+  final ProductLocalDataSource localDataSource;
 
   ProductRepositoryImpl({
-    required this.productDataSource,
+    required this.remoteDataSource,
+    required this.localDataSource,
     required super.networkInfo,
   });
 
   @override
-  Future<Either<Failure, List<Product>>> getProducts() {
-    return handleApiCall<List<Product>>(
-      call: () => productDataSource.getProducts(),
-      onSuccess: (data) => data as List<Product>,
-      context: 'get products',
-    );
+  Future<Either<Failure, List<Product>>> getProducts() async {
+    try {
+      const cacheKey = 'cached_products';
+      
+      // Check if we have internet connection
+      if (await networkInfo.isConnected) {
+        // Check if cache is still fresh
+        final isCacheExpired = await localDataSource.isCacheExpired(cacheKey);
+        
+        if (!isCacheExpired) {
+          // Cache is still fresh, use it
+          final cachedProducts = await localDataSource.getCachedProducts();
+          if (cachedProducts.isNotEmpty) {
+            return Right(cachedProducts as List<Product>);
+          }
+        }
+        
+        // Cache expired or doesn't exist, try to get fresh data from remote
+        final result = await handleApiCall<List<Product>>(
+          call: () => remoteDataSource.getProducts(),
+          onSuccess: (data) => data as List<Product>,
+          context: 'get products',
+        );
+        
+        return result.fold(
+          (failure) async {
+            // If remote call fails, try to get cached data as fallback
+            final cachedProducts = await localDataSource.getCachedProducts();
+            if (cachedProducts.isNotEmpty) {
+              return Right(cachedProducts as List<Product>);
+            }
+            return Left(failure);
+          },
+          (products) async {
+            // Cache the fresh data
+            await localDataSource.cacheProducts(products as List<ProductModel>);
+            return Right(products);
+          },
+        );
+      } else {
+        // No internet, try to get cached data
+        final cachedProducts = await localDataSource.getCachedProducts();
+        if (cachedProducts.isNotEmpty) {
+          return Right(cachedProducts as List<Product>);
+        }
+        return const Left(NetworkFailure('No internet connection and no cached data'));
+      }
+    } catch (e) {
+      return Left(CacheFailure( 'Failed to get products: ${e.toString()}'));
+    }
   }
 
   @override
-  Future<Either<Failure, Product>> getProductById(int id) {
-    return handleApiCall<Product>(
-      call: () => productDataSource.getProductById(id),
-      onSuccess: (data) => data as Product,
-      context: 'get product by id',
-    );
+  Future<Either<Failure, Product>> getProductById(int id) async {
+    try {
+      // Check if we have internet connection
+      if (await networkInfo.isConnected) {
+        // For product details, always try to fetch fresh data when online
+        print('🌐 Online: Fetching fresh data for product $id');
+        
+        final result = await handleApiCall<Product>(
+          call: () => remoteDataSource.getProductById(id),
+          onSuccess: (data) => data as Product,
+          context: 'get product by id',
+        );
+        
+        return result.fold(
+          (failure) async {
+            print('❌ API failed for product $id: ${failure.message}');
+            // If remote call fails, try to get cached data as fallback
+            final cachedProduct = await localDataSource.getCachedProductById(id);
+            if (cachedProduct != null) {
+              print('📦 Using cached fallback for product $id');
+              return Right(cachedProduct as Product);
+            }
+            return Left(failure);
+          },
+          (product) async {
+            print('✅ Got fresh data for product $id, caching it');
+            // Cache the fresh data for offline use
+            await localDataSource.cacheProduct(product as ProductModel);
+            return Right(product);
+          },
+        );
+      } else {
+        print('📴 Offline: Using cached data for product $id');
+        // No internet, try to get cached data
+        final cachedProduct = await localDataSource.getCachedProductById(id);
+        if (cachedProduct != null) {
+          return Right(cachedProduct as Product);
+        }
+        return const Left(NetworkFailure('No internet connection and no cached data'));
+      }
+    } catch (e) {
+      print('💥 Exception in getProductById: ${e.toString()}');
+      return Left(CacheFailure( 'Failed to get product: ${e.toString()}'));
+    }
   }
 
   @override
-  Future<Either<Failure, List<String>>> getCategories() {
-    return handleApiCall<List<String>>(
-      call: () => productDataSource.getCategories(),
-      onSuccess: (data) => data as List<String>,
-      context: 'get categories',
-    );
+  Future<Either<Failure, List<String>>> getCategories() async {
+    try {
+      const cacheKey = 'cached_categories';
+      
+      // Check if we have internet connection
+      if (await networkInfo.isConnected) {
+        // Check if cache is still fresh
+        final isCacheExpired = await localDataSource.isCacheExpired(cacheKey);
+        
+        if (!isCacheExpired) {
+          // Cache is still fresh, use it
+          final cachedCategories = await localDataSource.getCachedCategories();
+          if (cachedCategories.isNotEmpty) {
+            return Right(cachedCategories);
+          }
+        }
+        
+        // Cache expired or doesn't exist, try to get fresh data from remote
+        final result = await handleApiCall<List<String>>(
+          call: () => remoteDataSource.getCategories(),
+          onSuccess: (data) => data as List<String>,
+          context: 'get categories',
+        );
+        
+        return result.fold(
+          (failure) async {
+            // If remote call fails, try to get cached data as fallback
+            final cachedCategories = await localDataSource.getCachedCategories();
+            if (cachedCategories.isNotEmpty) {
+              return Right(cachedCategories);
+            }
+            return Left(failure);
+          },
+          (categories) async {
+            // Cache the fresh data
+            await localDataSource.cacheCategories(categories);
+            return Right(categories);
+          },
+        );
+      } else {
+        // No internet, try to get cached data
+        final cachedCategories = await localDataSource.getCachedCategories();
+        if (cachedCategories.isNotEmpty) {
+          return Right(cachedCategories);
+        }
+        return const Left(NetworkFailure('No internet connection and no cached data'));
+      }
+    } catch (e) {
+      return Left(CacheFailure( 'Failed to get categories: ${e.toString()}'));
+    }
   }
 
   @override
-  Future<Either<Failure, List<Product>>> getProductsByCategory(String category) {
-    return handleApiCall<List<Product>>(
-      call: () => productDataSource.getProductsByCategory(category),
-      onSuccess: (data) => data as List<Product>,
-      context: 'get products by category',
-    );
+  Future<Either<Failure, List<Product>>> getProductsByCategory(String category) async {
+    try {
+      final cacheKey = 'cached_category_products_$category';
+      
+      // Check if we have internet connection
+      if (await networkInfo.isConnected) {
+        // Check if cache is still fresh
+        final isCacheExpired = await localDataSource.isCacheExpired(cacheKey);
+        
+        if (!isCacheExpired) {
+          // Cache is still fresh, use it
+          final cachedProducts = await localDataSource.getCachedProductsByCategory(category);
+          if (cachedProducts.isNotEmpty) {
+            return Right(cachedProducts as List<Product>);
+          }
+        }
+        
+        // Cache expired or doesn't exist, try to get fresh data from remote
+        final result = await handleApiCall<List<Product>>(
+          call: () => remoteDataSource.getProductsByCategory(category),
+          onSuccess: (data) => data as List<Product>,
+          context: 'get products by category',
+        );
+        
+        return result.fold(
+          (failure) async {
+            // If remote call fails, try to get cached data as fallback
+            final cachedProducts = await localDataSource.getCachedProductsByCategory(category);
+            if (cachedProducts.isNotEmpty) {
+              return Right(cachedProducts as List<Product>);
+            }
+            return Left(failure);
+          },
+          (products) async {
+            // Cache the fresh data
+            await localDataSource.cacheProductsByCategory(category, products as List<ProductModel>);
+            return Right(products);
+          },
+        );
+      } else {
+        // No internet, try to get cached data
+        final cachedProducts = await localDataSource.getCachedProductsByCategory(category);
+        if (cachedProducts.isNotEmpty) {
+          return Right(cachedProducts as List<Product>);
+        }
+        return const Left(NetworkFailure('No internet connection and no cached data'));
+      }
+    } catch (e) {
+      return Left(CacheFailure( 'Failed to get products by category: ${e.toString()}'));
+    }
   }
 }

@@ -15,15 +15,17 @@ class ProductsLoaded extends ProductsState {
   final List<Product> products;
   final List<String> categories;
   final String? selectedCategory;
+  final bool isFromCache;
 
   const ProductsLoaded({
     required this.products,
     required this.categories,
     this.selectedCategory,
+    this.isFromCache = false,
   });
 
   @override
-  List<Object?> get props => [products, categories, selectedCategory];
+  List<Object?> get props => [products, categories, selectedCategory, isFromCache];
 }
 
 class ProductsError extends ProductsState {

@@ -182,32 +182,64 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       child: AppText.body(S.of(context).noProductsFound),
                     );
                   }
-                  return RefreshIndicator(
-                    onRefresh: () =>
-                        context.read<ProductsCubit>().refreshProducts(),
-                    child: GridView.builder(
-                      padding: EdgeInsets.all(16.w),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12.w,
-                        mainAxisSpacing: 12.h,
-                        childAspectRatio: 0.75,
+                  return Column(
+                    children: [
+                      // Offline indicator
+                      if (state.isFromCache)
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 8.h,
+                          ),
+                          color: AppColors.warning.withValues(alpha: 0.1),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.cloud_off,
+                                size: 16,
+                                color: AppColors.warning,
+                              ),
+                              SizedBox(width: 8.w),
+                              Expanded(
+                                child: AppText.caption(
+                                  'Showing offline data. Pull to refresh when online.',
+                                  color: AppColors.warning,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: () =>
+                              context.read<ProductsCubit>().refreshProducts(),
+                          child: GridView.builder(
+                            padding: EdgeInsets.all(16.w),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 12.w,
+                              mainAxisSpacing: 12.h,
+                              childAspectRatio: 0.75,
+                            ),
+                            itemCount: state.products.length,
+                            itemBuilder: (context, index) {
+                              final product = state.products[index];
+                              return ProductCard(
+                                product: product,
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    ProductDetailsScreen.routeName,
+                                    arguments: product.id,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                      itemCount: state.products.length,
-                      itemBuilder: (context, index) {
-                        final product = state.products[index];
-                        return ProductCard(
-                          product: product,
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              ProductDetailsScreen.routeName,
-                              arguments: product.id,
-                            );
-                          },
-                        );
-                      },
-                    ),
+                    ],
                   );
                 } else if (state is ProductsError) {
                   return Center(

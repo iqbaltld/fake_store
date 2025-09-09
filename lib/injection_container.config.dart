@@ -42,6 +42,8 @@ import 'features/cart/domain/usecases/remove_from_cart_use_case.dart' as _i589;
 import 'features/cart/domain/usecases/update_cart_item_use_case.dart' as _i124;
 import 'features/cart/presentation/cubit/cart_cubit.dart' as _i233;
 import 'features/product/data/datasources/product_data_source.dart' as _i196;
+import 'features/product/data/datasources/product_local_data_source.dart'
+    as _i210;
 import 'features/product/data/repositories/product_repository_impl.dart'
     as _i531;
 import 'features/product/domain/repositories/product_repository.dart' as _i841;
@@ -71,17 +73,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i577.ThemeCubit>(
       () => _i577.ThemeCubit(gh<_i460.SharedPreferences>()),
     );
+    gh.lazySingleton<_i210.ProductLocalDataSource>(
+      () => _i210.ProductLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i313.AuthDataSource>(
       () => _i313.AuthDataSourceImpl(
         gh<_i361.Dio>(),
         gh<_i460.SharedPreferences>(),
       ),
     );
-    gh.lazySingleton<_i196.ProductDataSource>(
-      () => _i196.ProductDataSourceImpl(gh<_i90.ApiManager>()),
-    );
     gh.lazySingleton<_i725.CartLocalDataSource>(
       () => _i725.CartLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i196.ProductRemoteDataSource>(
+      () => _i196.ProductRemoteDataSourceImpl(gh<_i90.ApiManager>()),
     );
     gh.lazySingleton<_i877.AuthRepository>(
       () => _i446.AuthRepositoryImpl(
@@ -89,33 +94,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i75.NetworkInfo>(),
       ),
     );
-    gh.lazySingleton<_i841.ProductRepository>(
-      () => _i531.ProductRepositoryImpl(
-        productDataSource: gh<_i196.ProductDataSource>(),
-        networkInfo: gh<_i75.NetworkInfo>(),
-      ),
-    );
     gh.lazySingleton<_i303.CartRepository>(
       () => _i302.CartRepositoryImpl(gh<_i725.CartLocalDataSource>()),
-    );
-    gh.lazySingleton<_i246.GetCategoriesUseCase>(
-      () => _i246.GetCategoriesUseCase(gh<_i841.ProductRepository>()),
-    );
-    gh.lazySingleton<_i244.GetProductsUseCase>(
-      () => _i244.GetProductsUseCase(gh<_i841.ProductRepository>()),
-    );
-    gh.lazySingleton<_i733.GetProductByIdUseCase>(
-      () => _i733.GetProductByIdUseCase(gh<_i841.ProductRepository>()),
-    );
-    gh.lazySingleton<_i670.ProductsCubit>(
-      () => _i670.ProductsCubit(
-        gh<_i244.GetProductsUseCase>(),
-        gh<_i246.GetCategoriesUseCase>(),
-        gh<_i841.ProductRepository>(),
-      ),
-    );
-    gh.lazySingleton<_i35.ProductDetailsCubit>(
-      () => _i35.ProductDetailsCubit(gh<_i733.GetProductByIdUseCase>()),
     );
     gh.lazySingleton<_i738.LogoutUseCase>(
       () => _i738.LogoutUseCase(gh<_i877.AuthRepository>()),
@@ -128,6 +108,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i416.GetUserDetailsUseCase>(
       () => _i416.GetUserDetailsUseCase(gh<_i877.AuthRepository>()),
+    );
+    gh.lazySingleton<_i841.ProductRepository>(
+      () => _i531.ProductRepositoryImpl(
+        remoteDataSource: gh<_i196.ProductRemoteDataSource>(),
+        localDataSource: gh<_i210.ProductLocalDataSource>(),
+        networkInfo: gh<_i75.NetworkInfo>(),
+      ),
     );
     gh.lazySingleton<_i468.GetCartTotalUseCase>(
       () => _i468.GetCartTotalUseCase(gh<_i303.CartRepository>()),
@@ -151,6 +138,25 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i416.GetUserDetailsUseCase>(),
         gh<_i593.CheckAuthStatusUseCase>(),
       ),
+    );
+    gh.lazySingleton<_i246.GetCategoriesUseCase>(
+      () => _i246.GetCategoriesUseCase(gh<_i841.ProductRepository>()),
+    );
+    gh.lazySingleton<_i244.GetProductsUseCase>(
+      () => _i244.GetProductsUseCase(gh<_i841.ProductRepository>()),
+    );
+    gh.lazySingleton<_i733.GetProductByIdUseCase>(
+      () => _i733.GetProductByIdUseCase(gh<_i841.ProductRepository>()),
+    );
+    gh.lazySingleton<_i670.ProductsCubit>(
+      () => _i670.ProductsCubit(
+        gh<_i244.GetProductsUseCase>(),
+        gh<_i246.GetCategoriesUseCase>(),
+        gh<_i841.ProductRepository>(),
+      ),
+    );
+    gh.factory<_i35.ProductDetailsCubit>(
+      () => _i35.ProductDetailsCubit(gh<_i733.GetProductByIdUseCase>()),
     );
     gh.lazySingleton<_i233.CartCubit>(
       () => _i233.CartCubit(

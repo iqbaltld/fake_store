@@ -25,6 +25,9 @@ class BaseRepositoryImpl implements BaseRepository {
     required NetworkInfo networkInfo,
   }) : _networkInfo = networkInfo;
 
+  // Expose networkInfo for subclasses
+  NetworkInfo get networkInfo => _networkInfo;
+
   @override
   Future<Either<Failure, T>> handleApiCall<T>({
     required Future<dynamic> Function() call,

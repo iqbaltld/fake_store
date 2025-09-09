@@ -10,11 +10,13 @@ abstract class ProductDataSource {
   Future<List<ProductModel>> getProductsByCategory(String category);
 }
 
-@LazySingleton(as: ProductDataSource)
-class ProductDataSourceImpl implements ProductDataSource {
+abstract class ProductRemoteDataSource extends ProductDataSource {}
+
+@LazySingleton(as: ProductRemoteDataSource)
+class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   final ApiManager _apiManager;
 
-  ProductDataSourceImpl(this._apiManager);
+  ProductRemoteDataSourceImpl(this._apiManager);
 
   @override
   Future<List<ProductModel>> getProducts() {
