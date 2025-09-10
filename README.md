@@ -91,7 +91,7 @@ lib/
 - **Loading States**: Proper loading indicators and shimmer effects
 
 
-## 🧪 Testing
+## Testing
 
 ### Testing Strategy
 - **Unit Tests**: Business logic and use case testing
@@ -100,7 +100,7 @@ lib/
 - **Integration Tests**: End-to-end user flow testing
 
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Flutter SDK 3.32.5+
@@ -127,7 +127,7 @@ flutter packages pub run intl_utils:generate
 flutter run
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### API Configuration
 Update API base URL in `lib/core/constants/api_urls.dart`:
