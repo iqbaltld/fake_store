@@ -19,7 +19,7 @@ class AppDrawer extends StatelessWidget {
           // User Profile Header
           BlocBuilder<AuthCubit, AuthState>(
             builder: (context, authState) {
-              if (authState is AuthAuthenticated && authState.user != null) {
+              if (authState is Authenticated && authState.user != null) {
                 final user = authState.user!;
                 return UserAccountsDrawerHeader(
                   decoration: BoxDecoration(
@@ -67,7 +67,10 @@ class AppDrawer extends StatelessWidget {
                   children: [
                     Icon(Icons.store, size: 48.sp, color: AppColors.white),
                     SizedBox(height: 8.h),
-                    AppText.heading2(S.of(context).appTitle, color: AppColors.white),
+                    AppText.heading2(
+                      S.of(context).appTitle,
+                      color: AppColors.white,
+                    ),
                   ],
                 ),
               );
@@ -173,7 +176,7 @@ class AppDrawer extends StatelessWidget {
 
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, authState) {
-                    if (authState is AuthAuthenticated) {
+                    if (authState is Authenticated) {
                       return _DrawerItem(
                         icon: Icons.logout,
                         title: S.of(context).logout,

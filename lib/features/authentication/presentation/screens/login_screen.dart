@@ -29,7 +29,7 @@ class LoginScreen extends StatelessWidget {
           padding: EdgeInsets.all(24.w),
           child: BlocListener<AuthCubit, AuthState>(
             listener: (context, state) {
-              if (state is AuthAuthenticated) {
+              if (state is Authenticated) {
                 Navigator.pushReplacementNamed(
                   context,
                   ProductsScreen.routeName,

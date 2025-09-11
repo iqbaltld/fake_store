@@ -29,11 +29,11 @@ class SplashScreen extends StatelessWidget {
           // Initialize auth check if in initial state
           if (state is AuthInitial) {
             _checkAuthStatus(context);
-          } else if (state is AuthAuthenticated) {
+          } else if (state is Authenticated) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pushReplacementNamed(context, ProductsScreen.routeName);
             });
-          } else if (state is AuthUnauthenticated) {
+          } else if (state is Unauthenticated) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pushReplacementNamed(context, LoginScreen.routeName);
             });
@@ -45,12 +45,12 @@ class SplashScreen extends StatelessWidget {
               children: [
                 Icon(Icons.shopping_bag, size: 80.sp, color: AppColors.white),
                 SizedBox(height: 24.h),
-                AppText.heading1(S.of(context).appTitle, color: AppColors.white),
-                SizedBox(height: 8.h),
-                AppText.body(
-                  S.of(context).appSubtitle,
+                AppText.heading1(
+                  S.of(context).appTitle,
                   color: AppColors.white,
                 ),
+                SizedBox(height: 8.h),
+                AppText.body(S.of(context).appSubtitle, color: AppColors.white),
                 SizedBox(height: 40.h),
                 const CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),

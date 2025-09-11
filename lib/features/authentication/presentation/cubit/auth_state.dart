@@ -11,17 +11,17 @@ class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
-class AuthAuthenticated extends AuthState {
+class Authenticated extends AuthState {
   final String token;
   final User? user;
 
-  const AuthAuthenticated({required this.token, this.user});
+  const Authenticated({required this.token, this.user});
 
   @override
   List<Object?> get props => [token, user];
 }
 
-class AuthUnauthenticated extends AuthState {}
+class Unauthenticated extends AuthState {}
 
 class AuthError extends AuthState {
   final String message;
